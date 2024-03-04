@@ -1,5 +1,5 @@
 import express from 'express' 
-import { HttpCodes  }from "../../project/modules/httpCodes.mjs";
+import { HttpCodes  }from "/httpCodes.mjs";
 
 
 /*
