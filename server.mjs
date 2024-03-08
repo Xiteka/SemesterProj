@@ -1,7 +1,7 @@
 import 'dotenv/config' ;
 import express from 'express'; // Express is installed using npm
 import USER_API from './routes/usersRoute.mjs'; // This is where we have defined the API for working with users.
-//import logger from './modules/logging.mjs';
+//import SuperLogger from './modules/SuperLogger.mjs';
 import errorHandler from './modules/errorHandler.mjs';
 
 
@@ -13,8 +13,8 @@ const port = (process.env.PORT || 8080);
 server.set('port', port);
 
 // Enable logging
-//const logg = new logger();
-//server.use(logger.createAutoHTTPRequestLogger()); 
+const logg = new logger();
+server.use(logger.createAutoHTTPRequestLogger()); 
 server.use(express.static('public'));
 
 
