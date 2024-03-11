@@ -5,12 +5,7 @@ import { HttpCodes}from "../modules/httpCodes.mjs";
 const USER_API = express.Router();
 USER_API.use(express.json()); // This makes it so that express parses all incoming payloads as JSON for this route.
 
-const users = [];
-// const helloWorldMiddleware = function (req, res, next){
-//     console.log("hello World");
-//     next();
-// }
-// USER_API.use(helloWorldMiddleware);
+
 
 USER_API.get('/:id', (req, res, next) => {
 

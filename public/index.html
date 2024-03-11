@@ -1,20 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My app</title>
+    <title>Drink It</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
-    <div>
-        Name : <input type="text" id="name"><br>
-        Email: <input type="email" id="email"><br />
-        Password: <input type="password" id="pswHash"><br />
-        <button id="createUserButton">Create User</button>
+    <div id="container">
+    <div id="homePage">
+    <div id="imgContainer">
+        <img src="./pic/water.png">
     </div>
+    <div btnContainer>
+        <label id="counterLabel">0</label><br>
+        <button id="increcebtn">+</button>
+        <button id="decresebtn">-</button>
+        <script src="../modules/counter.mjs"></script>
+    </div>
+
+    <script>
+    const createUserButton = document.getElementById("btnCreateUserSendData");
+                createUserButton.onclick = async function (e) {
+                    const name = document.getElementById("name").value;
+                    const email = document.getElementById("email").value;
+                    let pswHash = document.getElementById("pswHash").value;
+                   // pswHash = await sha256(pswHash);
+                    const user = { name, email, pswHash };
+                    const respon = await postTo("/user", user);
+                    console.log(respon);
+                    // container.innerHTML = "";
+                    // const userLogInContent = userLogIn.content.cloneNode(true);
+                    // container.appendChild(userLogInContent);
+                };
+    </script>
 
     <style>
         html, body {
@@ -31,115 +51,27 @@
             margin: 30px auto;
             
         }
+        #homePage{
+            display: flex;
+            flex-direction: row;
+        }
 
-        h1{
-            color: #c5151c;
+        #increcebtn{
+            width: 100%;
+        }
+
+        #btnContainer{
+            background-color: rgb(108, 74, 30); 
+            padding: 20;
         }
 
         img{
-            max-width: 150px;
+            max-width: 50px;
             margin: 0px auto;
         }
-
-        input{
-            color: gray;
-            background-color: #ebe6dc;
-            font-family:monospace;
-            border: 0;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 20px;
-            text-align: center;
-            margin: 10px 0;
-        }
-
-    
-
-        #btnAddIngredients{
-            color: gray;            
-            background-color: #e8c59c;
-            font-family:monospace;
-            border: 0;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 20px;
-            text-align: center;
-            margin: 10px 0;
-        }
-        #btnGenerateRecipe{
-            color:antiquewhite;
-            background-color: #5c914d;
-            font-family:monospace;
-            border: 0;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 20px;
-            text-align: center;
-            margin: 10px 0;
-        }
-
-        #contentContainer {
-            display: flex;
-            flex-direction: column;
-            max-width: 320px;
-            margin: 30px auto;
-        }
-
-        #recipeContainer {
-            display: none;
-        }
-        ul{
-            list-style-type: none;
-            padding: 0;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        ul li {
-            box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
-            color: gray;
-            background-color: #ebe6dc;
-            font-family:monospace;
-            border: 0;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 20px;
-            text-align: center;
-            margin: 10px 0;
-            flex-grow: 1;
-        }
+       
     </style>
-
-    <script>
-
-        const createUserButton = document.getElementById("createUserButton");
-
-        createUserButton.onclick = async function (e) {
-
-            const name = document.getElementById("name").value;
-            const email = document.getElementById("email").value;
-            const pswHash = document.getElementById("pswHash").value;
-            const user = { name, email, pswHash };
-            const respon = await postTo("/user", user);
-
-        }
-
-        async function postTo(url, data) {
-            const header = {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(data),
-            };
-
-            const respon = await fetch(url, header);
-            return respon;
-        }
-
-    </script>
-
+    
 </body>
 
 </html>
