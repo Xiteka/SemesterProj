@@ -8,7 +8,7 @@ USER_API.use(express.json()); // This makes it so that express parses all incomi
 
 
 USER_API.get('/:id', (req, res, next) => {
-
+    console.log("get/id")
     // Tip: All the information you need to get the id part of the request can be found in the documentation 
     // https://expressjs.com/en/guide/routing.html (Route parameters)
 
@@ -17,7 +17,7 @@ USER_API.get('/:id', (req, res, next) => {
 })
 
 USER_API.post('/', async (req, res, next) => {
-
+    console.log(req.body)
     // This is using javascript object destructuring.
     // Recomend reading up https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment#syntax
     // https://www.freecodecamp.org/news/javascript-object-destructuring-spread-operator-rest-parameter/
@@ -33,7 +33,6 @@ USER_API.post('/', async (req, res, next) => {
 
         ///TODO: Does the user exist?
         let exists = false;
-
         if (!exists) {
             //TODO: What happens if this fails?
             user = await user.save();
@@ -55,9 +54,18 @@ USER_API.put('/:id', (req, res) => {
 });
 
 USER_API.delete('/:id', (req, res) => {
+    console.log("INNI METODEN")
+    console.log("ID JEG FÅR INN" + req.params.id)
+    const userId = req.params.id;
     /// TODO: Delete user.
-    const user = new User(); //TODO: Actual user
-    user.delete();
+    const user = new User("","","", userId);
+    console.log(user.id)
+
+    if(user.delete()){
+        res.status(HttpCodes.SuccesfullRespons.Ok).send("User Dosen't exist anymore").end()
+    } else {
+        res.status(HttpCodes.ClientSideErrorRespons.BadRequest).send("cant delete").end();
+    }
 });
 
 export default USER_API

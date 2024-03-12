@@ -24,7 +24,7 @@ class DBManager {
 
         try {
             await client.connect();
-            const output = await client.query('UPDATE "public"."Users" set "name" = $1, "email" = $2, "pswHash" = $3 where id = $4;', [user.name, user.email, user.pswHash, user.id]);
+            const output = await client.query('UPDATE "public"."users" set "name" = $1, "email" = $2, "pswHash" = $3 where id = $4;', [user.name, user.email, user.pswHash, user.id]);
 
             // Client.Query returns an object of type pg.Result (https://node-postgres.com/apis/result)
             // Of special intrest is the rows and rowCount properties of this object.
@@ -43,11 +43,15 @@ class DBManager {
 
     async deleteUser(user) {
         const client = new pg.Client(this.#credentials);
-    
+        console.log(user.id)
         try {
             await client.connect();
-            const output = await client.query('DELETE FROM "public"."Users" WHERE id = $1;', [user.id]);
-            // Check if the user got deleted if needed
+            const output = await client.query('DELETE FROM "public"."users" WHERE id = $1;', [user.id]);
+            const isHeThere = await client.query('SELECT * FROM "public"."users" WHERE "id" = $1', [user.id]);
+            if(output.rows[0]){
+                console.log("he is still in here")
+                return false;
+            }
             return true;
         } catch (error) {
             console.error("Error deleting user:", error);
@@ -56,10 +60,6 @@ class DBManager {
             client.end(); // Always disconnect from the database.
         }
     }
-    
-
-
-    
 
     async createUser(user) {
 
@@ -94,7 +94,7 @@ class DBManager {
     
         try {
             await client.connect();
-            const output = await client.query('SELECT * FROM "public"."Users" WHERE "id" = $1', [user.id]);
+            const output = await client.query('SELECT * FROM "public"."users" WHERE "id" = $1', [user.id]);
     
             console.log(output);
             user = output.rows[0];
@@ -116,7 +116,7 @@ class DBManager {
     
         try {
             await client.connect();
-            const output = await client.query('SELECT * FROM "public"."Users" WHERE "email" = $1', [email]);
+            const output = await client.query('SELECT * FROM "public"."users" WHERE "email" = $1', [email]);
     
             console.log(output);
             user = output.rows[0];
@@ -129,29 +129,6 @@ class DBManager {
         }
     
         return user;
-    }
-
-    async getRecipie(ingridients) {
-        const client = new pg.Client(this.#credentials);
-        try {
-            await client.connect();
-            console.log('Connected to the database');
-    
-            const output = await client.query('SELECT * FROM "public"."recipies";');
-            console.log('Query executed successfully');
-    
-            recipie = output.rows;  // Make sure to assign a value to recipie
-    
-        } catch (error) {
-            console.error('Error in getRecipie:', error.stack);
-            // Rethrow the error to propagate it to the caller
-            throw error;
-        } finally {
-            client.end();
-            console.log('Disconnected from the database');
-        }
-    
-        return recipie;
     }
     
 }    

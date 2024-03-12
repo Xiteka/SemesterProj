@@ -1,77 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Drink It</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-
-    <div id="container">
-    <div id="homePage">
-    <div id="imgContainer">
-        <img src="./pic/water.png">
+    <!-- <h1>Calendar</h1>
+    <div class="calendar">
+      <header>
+        <h3></h3>
+        <nav>
+          <button id="prev"></button>
+          <button id="next"></button>
+        </nav>
+      </header>
+      <section>
+        <ul class="days">
+          <li>Sun</li>
+          <li>Mon</li>
+          <li>Tue</li>
+          <li>Wed</li>
+          <li>Thu</li>
+          <li>Fri</li>
+          <li>Sat</li>
+        </ul>
+        <ul class="dates"></ul>
+      </section>
     </div>
-    <div btnContainer>
-        <label id="counterLabel">0</label><br>
-        <button id="increcebtn">+</button>
-        <button id="decresebtn">-</button>
-        <script src="../modules/counter.mjs"></script>
-    </div>
+    <script src="../modules/calender.mjs" defer></script> -->
 
-    <script>
-    const createUserButton = document.getElementById("btnCreateUserSendData");
-                createUserButton.onclick = async function (e) {
-                    const name = document.getElementById("name").value;
-                    const email = document.getElementById("email").value;
-                    let pswHash = document.getElementById("pswHash").value;
-                   // pswHash = await sha256(pswHash);
-                    const user = { name, email, pswHash };
-                    const respon = await postTo("/user", user);
-                    console.log(respon);
-                    // container.innerHTML = "";
-                    // const userLogInContent = userLogIn.content.cloneNode(true);
-                    // container.appendChild(userLogInContent);
-                };
-    </script>
-
-    <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            font-family:monospace;
-            background-color: antiquewhite;
-        }
-
-        #container {
-            display: flex;
-            flex-direction: column;
-            max-width: 320px;
-            margin: 30px auto;
-            
-        }
-        #homePage{
-            display: flex;
-            flex-direction: row;
-        }
-
-        #increcebtn{
-            width: 100%;
-        }
-
-        #btnContainer{
-            background-color: rgb(108, 74, 30); 
-            padding: 20;
-        }
-
-        img{
-            max-width: 50px;
-            margin: 0px auto;
-        }
-       
-    </style>
+    <h1>Creat User</h1>
+    <input type="text" id="nameCreatUserInp" placeholder="name">
+    <input type="text" id="loggCreatUserInInp" placeholder="email">
+    <input type="text" id="passwordCreatUserInp" placeholder="password">
+    <button onclick="signUp()" id="loggInBtn">Sign Up</button>
+    <br>
+    <h1>Delete User</h1> 
+    <input type="text" id="DeleteUserId" placeholder="UserId">
+    <button onclick="deleteUser()" id="deleteBtn">Delete</button>
     
+    <script>
+         function signUp() {
+        // Get the input values
+        const name = document.getElementById("nameCreatUserInp").value;
+        const email = document.getElementById("loggCreatUserInInp").value;
+        const password = document.getElementById("passwordCreatUserInp").value;
+
+        // Do something with the input values, such as sending them to a server or validating them
+        let user = {
+          name: name,
+          email: email,
+          passwrod: password
+        }
+        
+        const json = JSON.stringify(user);
+        console.log(json);
+
+        fetch('http://localhost:8080/user/', {
+        method: 'POST',
+        body: json,
+        }).then(response => {
+        console.log( response.json());
+    })
+
+        // Here you can add further logic for signup process
+    }
+    
+    function deleteUser() {
+        // Get the input values
+        const id = document.getElementById("DeleteUserId").value;
+
+        // Do something with the input values, such as sending them to a server or validating them
+        
+        fetch('http://localhost:8080/user/' + id , {
+        method: 'DELETE',
+        }).then(response => {
+        console.log( response.status);
+    })
+
+        // Here you can add further logic for signup process
+    }
+
+    </script>
 </body>
 
 </html>
