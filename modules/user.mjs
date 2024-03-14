@@ -20,6 +20,36 @@ class User {
           return await DBManager.updateUser(this);
         }
       }
+      async login() {
+        const dBUser = await DBManager.loginUser(this.email, this.pswHash);
+        if (dBUser.id !== null) {
+          if (dBUser.pswHash == this.pswHash) {
+            this.id = dBUser.id
+            this.name = dBUser.name
+            this.email = dBUser.email
+            this.pswHash = dBUser.pswHash
+
+            return {
+              success: true,
+              user: {
+                id: this.id,
+                name: this.name,
+                email: this.email
+              }
+            }
+          } else {
+            return {
+              success: false,
+              message: "wrong password"
+            }
+          } 
+        } else {
+          return {
+            success: false,
+            message: "no existing user"
+          }
+        } 
+      }
 
       async delete() {
         console.log(this.id + " THIS IS MY ID")

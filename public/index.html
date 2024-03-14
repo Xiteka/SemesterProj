@@ -2,14 +2,18 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drink It</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Drink It</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="..//counter.mjs"></script>
 </head>
 
 <body>
-    <!-- <h1>Calendar</h1>
+  <div id="container">
+
+  </div>
+  <h1>Calendar</h1>
     <div class="calendar">
       <header>
         <h3></h3>
@@ -31,9 +35,9 @@
         <ul class="dates"></ul>
       </section>
     </div>
-    <script src="../modules/calender.mjs" defer></script> -->
+    <script src="../modules/calender.mjs" defer></script>
 
-    <h1>Creat User</h1>
+  <!-- <h1>Creat User</h1>
     <input type="text" id="nameCreatUserInp" placeholder="name">
     <input type="text" id="loggCreatUserInInp" placeholder="email">
     <input type="text" id="passwordCreatUserInp" placeholder="password">
@@ -41,51 +45,130 @@
     <br>
     <h1>Delete User</h1> 
     <input type="text" id="DeleteUserId" placeholder="UserId">
-    <button onclick="deleteUser()" id="deleteBtn">Delete</button>
-    
-    <script>
-         function signUp() {
-        // Get the input values
-        const name = document.getElementById("nameCreatUserInp").value;
-        const email = document.getElementById("loggCreatUserInInp").value;
-        const password = document.getElementById("passwordCreatUserInp").value;
+    <button onclick="deleteUser()" id="deleteBtn">Delete</button> -->
 
-        // Do something with the input values, such as sending them to a server or validating them
-        let user = {
-          name: name,
-          email: email,
-          passwrod: password
+   
+      <h2>Profil</h2>
+      <h1 id="userNameValue"></h1>
+      <h3 id="userEmailValue">Email: </h3>
+      <button id="btnUpdateUser">Endre bruker</button>
+      <button id="btnDeleteUser">Slett bruker</button>
+      <button id="btnHome">Hjem</button>
+      <button id="btnLogOut">Logg ut</button>
+
+  
+
+
+  <script type="module">
+
+    await insertTemplatesFrom("templates.html")
+    const homePage = document.querySelector("#homePage");
+    const container = document.getElementById("container");
+    const toLoggIn = document.getElementById("toLoggIn")
+    const loggInPage = document.getElementById("loggInPage")
+
+    const homePageContent = homePage.content.cloneNode(true);
+    container.appendChild(homePageContent);
+
+    let count = 0;
+    const increcebtn = document.getElementById("increcebtn");
+    const decresebtn = document.getElementById("decresebtn");
+    increcebtn.onclick = function () {
+      count += 1;
+      const counterLabel = document.getElementById("counterLabel")
+      counterLabel.innerHTML = count;
+    }
+    decresebtn.onclick = function () {
+      count -= 1;
+      counterLabel.innerHTML = count;
+    }
+    async function insertTemplatesFrom(source) {
+      const templates = await fetch(source).then(d => d.text());
+      document.body.insertAdjacentHTML("beforeend", templates);
+    }
+
+    container.addEventListener("click", async function (evt) {
+      if (evt.target.id === "toLoggIn") {
+        container.innerHTML = "";
+        const loggInPageContent = loggInPage.content.cloneNode(true);
+        container.appendChild(loggInPageContent);
+
+        const loggInBtn = document.getElementById("loggInBtn");
+
+
+        loggInBtn.onclick = async function (e) {
+          const email = document.getElementById("loggInInp").value;
+          console.log(email);
+          const password = document.getElementById("passwordInp").value;
+          const user = { email, password }
+          console.log(user);
+          const response = await logIn("/user/loggIn", user)
+          console.log(response);
+
         }
-        
-        const json = JSON.stringify(user);
-        console.log(json);
 
-        fetch('http://localhost:8080/user/', {
+
+      }
+    })
+
+
+    function signUp() {
+      // Get the input values
+      const name = document.getElementById("nameCreatUserInp").value;
+      const email = document.getElementById("loggCreatUserInInp").value;
+      const password = document.getElementById("passwordCreatUserInp").value;
+
+      // Do something with the input values, such as sending them to a server or validating them
+      let user = {
+        name: name,
+        email: email,
+        passwrod: password
+      }
+
+      const json = JSON.stringify(user);
+      console.log(json);
+
+      fetch('http://localhost:8080/user/', {
         method: 'POST',
         body: json,
-        }).then(response => {
-        console.log( response.json());
-    })
+      }).then(response => {
+        console.log(response.json());
+      })
 
-        // Here you can add further logic for signup process
+      // Here you can add further logic for signup process
     }
-    
+
     function deleteUser() {
-        // Get the input values
-        const id = document.getElementById("DeleteUserId").value;
+      // Get the input values
+      const id = document.getElementById("DeleteUserId").value;
 
-        // Do something with the input values, such as sending them to a server or validating them
-        
-        fetch('http://localhost:8080/user/' + id , {
+      // Do something with the input values, such as sending them to a server or validating them
+
+      fetch('user/' + id, {
         method: 'DELETE',
-        }).then(response => {
-        console.log( response.status);
-    })
+      }).then(response => {
+        console.log(response.status);
+      })
+    }
+      // Here you can add further logic for signup process
+    
 
-        // Here you can add further logic for signup process
+    
+    async function logIn(url, data) {
+      const header = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      };
+
+      const respon = await fetch(url, header);
+      return respon;
     }
 
-    </script>
+  </script>
+
 </body>
 
 </html>

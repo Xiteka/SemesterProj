@@ -7,7 +7,7 @@
         <label id="counterLabel">0</label><br>
         <button id="increcebtn">+</button>
         <button id="decresebtn">-</button>
-        <script src="../modules/counter.mjs"></script>
+        <button id="toLoggIn">logg inn</button>
     </div>
 
 </template>
@@ -27,9 +27,14 @@
 <template id="signUp">
 
     <h1>Creat User</h1>
-    <input type="text" id="nameCreatUserInp" placeholder="email">
+    <input type="text" id="nameCreatUserInp" placeholder="name">
     <input type="text" id="loggCreatUserInInp" placeholder="email">
     <input type="text" id="passwordCreatUserInp" placeholder="password">
-    <button id="loggInBtn">Sign Up</button>
+    <button onclick="signUp()" id="loggInBtn">Sign Up</button>
+    <br>
+    <h1>Delete User</h1> 
+    <input type="text" id="DeleteUserId" placeholder="UserId">
+    <button onclick="deleteUser()" id="deleteBtn">Delete</button>
     
 </template>
+
