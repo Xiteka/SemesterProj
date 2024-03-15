@@ -16,7 +16,7 @@ server.use(express.static('public'));
 
 server.use(express.json())
 server.use("/user", USER_API);
-server.use("/beverage", BEVERAGE_API);
+server.use("/beverage", BEVERAGE_API); 
 
 
 server.get("/", (req, res, next) => {

@@ -7,10 +7,14 @@ const BEVERAGE_API = express.Router();
 BEVERAGE_API.post('/', async (req, res, next) => { // assumes userId and date as input
     console.log(req.body)
     
-    const { userId, date, description } = req.body;
+    const { userId, date, count } = req.body;
 
-    if (userId != "" && date != "" && description != "") {
+    if (userId != "" && date != "" && count != "") {
         let drink = new Beverage();
+        drink.count = count
+        drink.userId = userId
+        drink.date = date
+
         
         
 
@@ -18,7 +22,7 @@ BEVERAGE_API.post('/', async (req, res, next) => { // assumes userId and date as
         let exists = false;
         if (!exists) {
             //TODO: What happens if this fails?
-            drink = await drink.save();
+            drink = await drink.save()
             res.status(HttpCodes.SuccesfullRespons.Ok).json(JSON.stringify(drink)).end();
         } else {
             res.status(HttpCodes.ClientSideErrorRespons.BadRequest).end();

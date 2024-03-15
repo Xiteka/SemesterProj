@@ -142,6 +142,33 @@ class DBManager {
         return drink;
 
     }
+    async loggDrinks(drink) {
+
+        const client = new pg.Client(this.#credentials);
+
+        try {
+            const sql = 'INSERT INTO "public"."beverage_table"("date", "userId", "count") VALUES($1, $2, $3)';
+            const parms = [drink.date, drink.userId, drink.count];
+            await client.connect();
+            const output = await client.query(sql, parms);
+            // Client.Query returns an object of type pg.Result (https://node-postgres.com/apis/result)
+            // Of special intrest is the rows and rowCount properties of this object.
+
+            if (output.rows.length == 1) {
+                // We stored the user in the DB.
+                drink.id = output.rows[0].id;
+            }
+
+        } catch (error) {
+            console.error(error);
+            //TODO : Error handling?? Remember that this is a module seperate from your server 
+        } finally {
+            client.end(); // Always disconnect from the database.
+        }
+
+        return drink;
+
+    }
     
 }    
 

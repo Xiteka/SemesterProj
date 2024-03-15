@@ -18,17 +18,23 @@
 
     await insertTemplatesFrom("templates.html");
     const container = document.getElementById("container");
+    let count = 0;
 
     // ┉> Template Pages <┉
     const starterPage = document.querySelector("#starterPage");
     const logInPage = document.querySelector("#logInPage");
     const CreateUserPage = document.querySelector("#CreateUserPage")
     const homePageses = document.querySelector("#homePageses")
+    const calendarPage = document.querySelector("#calendarPage")
+    const editUserPage = document.querySelector("#editUserPage")
 
 
     // ┉> Buttun Pages <┉
     const toLogInPageBtn = document.getElementById("toLogInPageBtn");
     const toCreateUserPageBtn = document.getElementById("toCreateUserPageBtn");
+    const toCalederPage = document.getElementById("toCalederPage");
+    const increcebtn = document.getElementById("increcebtn");
+    const saveDrinkDataBtn = document.getElementById("saveDrinkDataBtn");
 
 
     //------------------------App functionality (JAVASCRIPT) ----------------------------------//
@@ -39,8 +45,13 @@
     } else {
       const homePagesesContent = homePageses.content.cloneNode(true);
       container.appendChild(homePagesesContent);
-
     }
+
+    //------------------------App functionality (JAVASCRIPT) ----------------------------------//
+
+
+
+
     //------------------------Functions----------------------------------//
 
     async function insertTemplatesFrom(source) {
@@ -94,7 +105,7 @@
         throw error;
       }
     }
-    
+
     async function createDrinkData(url, data) {
       const header = {
         method: "POST",
@@ -139,21 +150,6 @@
           const homePagesesContent = homePageses.content.cloneNode(true);
           container.appendChild(homePagesesContent);
 
-          let count = 0;
-          const increcebtn = document.getElementById("increcebtn");
-          const decresebtn = document.getElementById("decresebtn");
-          increcebtn.onclick = function () {
-            const userId = localStorage.getItem("userId");
-            const description = counterLabel.value;
-            //date ? ask OmarChan const date = value 
-            count += 1;
-            const counterLabel = document.getElementById("counterLabel")
-            counterLabel.innerHTML = count;
-          }
-          decresebtn.onclick = function () {
-            count -= 1;
-            counterLabel.innerHTML = count;
-          }
         })
 
       } else if (evt.target.id === "toCreateUserPageBtn") {
@@ -177,8 +173,37 @@
           }
           const responseData = await response.json();
           const userId = responseData.id
+          console.log(userId);
+          localStorage.setItem("userId", userId)
+
+          container.innerHTML = "";
+          const homePagesesContent = homePageses.content.cloneNode(true);
+          container.appendChild(homePagesesContent);
         })
 
+      } else if (evt.target.id === "toCalederPage") {
+        console.log("hello");
+        container.innerHTML = "";
+        const calendarPageContent = calendarPage.content.cloneNode(true);
+        container.appendChild(calendarPageContent);
+        const counterLabel = document.getElementById("counterLabel")
+
+
+      } else if (evt.target.id === "increcebtn") {
+        count += 1;
+        counterLabel.innerHTML = count;
+      }
+
+      else if (evt.target.id === "saveDrinkDataBtn") {
+        
+        const userId = localStorage.getItem("userId");
+        const date = new Date();
+        const drink = { date, count, userId }
+        console.log(drink);
+        const response = await createDrinkData("/beverage/", drink)
+          console.log(response);
+
+      
 
       }
     })
