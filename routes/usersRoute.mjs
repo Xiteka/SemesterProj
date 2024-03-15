@@ -65,21 +65,36 @@ USER_API.put('/:id', (req, res) => {
     user.save();
 });
 
-USER_API.delete('/:id', (req, res) => {
+USER_API.delete('/:id', async (req, res) => {
     console.log("INNI METODEN")
     console.log("IDEN JEG FÅR INN" + req.params.id)
-    const userId = req.params.id;
-    /// TODO: Delete user.
-    const user = new User("", "", "", userId);
+    const { id } = req.params;
+    const user = new User();
+    user.id = id;
     console.log(user.id)
 
-    if (user.delete()) {
+    try{
+        await user.delete();
         res.status(HttpCodes.SuccesfullRespons.Ok).send("User Dosen't exist anymore").end();
-    } else {
+    } catch (error) {
         res.status(HttpCodes.ClientSideErrorRespons.BadRequest).send("cant delete").end();
     }
 });
 
+
+    //----------------------------------------------//
+    //ROMOVE THISSSSS !!!!!!!!!!!!!!!!!!!!
+    //----------------------------------------------//
+    // if (user.delete()) {
+    //     res.status(HttpCodes.SuccesfullRespons.Ok).send("User Dosen't exist anymore").end();
+    // } else {
+    //     res.status(HttpCodes.ClientSideErrorRespons.BadRequest).send("cant delete").end();
+    // }
+     //----------------------------------------------//
+    //ROMOVE THISSSSS !!!!!!!!!!!!!!!!!!!!
+    //----------------------------------------------//
+
+    
 USER_API.post('/loggIn', async (req, res, next) => {
     const { email, password } = req.body;
 

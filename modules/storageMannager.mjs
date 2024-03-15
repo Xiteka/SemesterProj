@@ -130,7 +130,20 @@ class DBManager {
     
         return user;
     }
+    async upadateDrink(drink) {
+        //sjekk om drink ekistere
+
+        //om ekists, update
+
+        // om ikke lag en ny drink colum 
+
+        // HUSK Å MEKK COUNT INT I BEVERAGE TABLE
+
+        return drink;
+
+    }
     
 }    
+
 
 export default new DBManager(process.env.DB_CONNECTIONSTRING_PROD);

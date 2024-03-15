@@ -1,6 +1,7 @@
 import 'dotenv/config' ;
 import express from 'express';
 import USER_API from './routes/usersRoute.mjs';
+import BEVERAGE_API from './routes/beverageRoute.mjs';
 import SuperLogger from './modules/SuperLogger.mjs';
 import errorHandler from './modules/errorHandler.mjs';
 
@@ -13,7 +14,10 @@ const logger = new SuperLogger();
 server.use(logger.createAutoHTTPRequestLogger()); 
 server.use(express.static('public'));
 
+server.use(express.json())
 server.use("/user", USER_API);
+server.use("/beverage", BEVERAGE_API);
+
 
 server.get("/", (req, res, next) => {
 

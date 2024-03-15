@@ -1,31 +1,38 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
-* {
+/* * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
-}
+} */
 
 html, body {
-  padding: 1 rem;
-  /* margin: 0;
-  padding: 0; */
+  /* padding: 1rem; */
+  margin: 0;
+  padding: 0;
   height: 100vh;
   font-family: Poppins, sans-serif;
   background: linear-gradient(to bottom, #ff5e88, #ff9966);
-  /* background-color: antiquewhite;    */
-}
+  /* background-color: antiquewhite;   */ 
+} 
 
-.container {
+#container {
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   max-width: 320px;
   margin: 30px auto;
+  border: 1px solid red; /* Add a border to visualize the container */
 }
 
-img{
-  max-width: 150px;
-  margin: 0px auto;
+#imgContainer {
+  text-align: center;
+}
+
+img {
+  max-width: 50%; /* Ensure the image fits within its container */
+  border: 1px solid blue; /* Add a border to visualize the image */
 }
 
 h1 {
@@ -111,8 +118,8 @@ h3 {
 }
 .dates li.today::before {
   content: "";
-  width: 1rem;
-  height: 1rem;
+  width: 2rem;
+  height: 2rem;
   position: absolute;
   top: 50%;
   left: 50%;
