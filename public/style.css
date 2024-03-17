@@ -1,19 +1,11 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
 
-/* * {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-} */
-
 html, body {
-  /* padding: 1rem; */
   margin: 0;
   padding: 0;
   height: 100vh;
   font-family: Poppins, sans-serif;
   background: linear-gradient(to bottom, #ff5e88, #ff9966);
-  /* background-color: antiquewhite;   */ 
 } 
 
 #container {
@@ -30,6 +22,10 @@ html, body {
   text-align: center;
 }
 
+#toHomePageBtn{
+  font-size: large;
+}
+
 img {
   max-width: 50%; /* Ensure the image fits within its container */
   border: 1px solid blue; /* Add a border to visualize the image */
@@ -44,36 +40,6 @@ h1 {
 
 h3 {
   font-weight: 600;
-}
-
-.calendar {
-  margin: auto;
-  width: 98%;
-  max-width: 320px;
-  padding: 0;
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-}
-
-.calendar header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.calendar ul {
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    text-align: center;
-}
-
-.calendar ul li {
-    width: calc(100% / 7);
-    margin-top: 25px;
-    position: relative;
-    z-index: 2;
 }
 
 #prev, #next {
@@ -110,24 +76,27 @@ h3 {
 #next:hover::before {
   border-color: #000;
 }
-.days {
-  font-weight: 600;
+
+input {
+  color: gray;
+  background-color: #ebe6dc;
+  font-family: monospace;
+  border: 0;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 20px;
+  text-align: center;
+  margin: 10px 0;
 }
-.dates li.today {
-  color: #fff;
-}
-.dates li.today::before {
-  content: "";
-  width: 2rem;
-  height: 2rem;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: #000;
-  border-radius: 50%;
-  z-index: -1;
-}
-.dates li.inactive {
-  color: #ccc;
+
+button {
+  color: antiquewhite;
+  background-color: #5c914d;
+  font-family: monospace;
+  border: 0;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 20px;
+  text-align: center;
+  margin: 10px 0;
 }

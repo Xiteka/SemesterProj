@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Drink It</title>
   <link rel="stylesheet" href="style.css">
+  <script src="./sha256.js"></script>
 </head>
 
 <body>
@@ -25,14 +26,14 @@
     const logInPage = document.querySelector("#logInPage");
     const CreateUserPage = document.querySelector("#CreateUserPage")
     const homePageses = document.querySelector("#homePageses")
-    const calendarPage = document.querySelector("#calendarPage")
+    const SettingsPage = document.querySelector("#SettingsPage")
     const editUserPage = document.querySelector("#editUserPage")
-
+    const savedDrinkPage = document.querySelector("#savedDrinkPage")
 
     // ┉> Buttun Pages <┉
     const toLogInPageBtn = document.getElementById("toLogInPageBtn");
     const toCreateUserPageBtn = document.getElementById("toCreateUserPageBtn");
-    const toCalederPage = document.getElementById("toCalederPage");
+    const toSettingsBtn = document.getElementById("toSettingsBtn");
     const increcebtn = document.getElementById("increcebtn");
     const saveDrinkDataBtn = document.getElementById("saveDrinkDataBtn");
 
@@ -85,6 +86,20 @@
       return respon;
     }
 
+    async function updateUser(url, data) {
+      const header = {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      };
+
+      const respon = await fetch(url, header);
+      return respon;
+
+    }
+
     async function deleteUser(url) {
       const header = {
         method: "DELETE",
@@ -95,10 +110,10 @@
 
       try {
         const respon = await fetch(url, header);
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
+        if (!respon.ok) {
+          throw new Error(`HTTP error! Status: ${respon.status}`);
         }
-        return response;
+        return respon;
 
       } catch (error) {
         console.error("Error during delete request:", error);
@@ -119,6 +134,33 @@
       return respon;
     }
 
+    async function getDrinkData(url, data) {
+      const newUrl = `${url}?userId=${data}`
+      const header = {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      const respon = await fetch(newUrl, header);
+      return respon;
+    }
+
+    async function deleteDrinkData(url, data) {
+      const newUrl = `${url}?id=${data}`
+      const header = {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      const respon = await fetch(newUrl, header);
+      return respon;
+    }
+
+
     //--------------------------Event and buttons --------------------------------//
     container.addEventListener("click", async function (evt) {
       if (evt.target.id === "toLogInPageBtn") {
@@ -132,20 +174,25 @@
 
           const errorLogIn = document.getElementById("errorLogIn")
           const email = document.getElementById("logInInp").value;
-          console.log(email);
-          const password = document.getElementById("passwordInp").value;
+          let password = document.getElementById("passwordInp").value;
+          password = await sha256(password);
           const user = { email, password }
           console.log(user);
+
           const response = await logIn("/user/loggIn", user)
           console.log(response);
           if (response.status != 200) {
             errorLogIn.innerHTML = "Wrong username or password"
           }
+
           const responseData = await response.json();
+          const userName = responseData.name
+          const userEmail = responseData.email
           const userId = responseData.id
+          localStorage.setItem("userName", userName)
+          localStorage.setItem("userEmail", userEmail)
           localStorage.setItem("userId", userId)
 
-          // HOMEPAGE
           container.innerHTML = "";
           const homePagesesContent = homePageses.content.cloneNode(true);
           container.appendChild(homePagesesContent);
@@ -163,7 +210,8 @@
 
           const name = document.getElementById("nameCreateUserInp").value;
           const email = document.getElementById("loggCreateUserInInp").value;
-          const password = document.getElementById("passwordCreateUserInp").value;
+          let password = document.getElementById("passwordCreateUserInp").value;
+          password = await sha256(password);
           const user = { name, email, password }
           console.log(user);
           const response = await createUser("/user/", user)
@@ -172,40 +220,191 @@
             errorLogIn.innerHTML = "Wrong username or password"
           }
           const responseData = await response.json();
-          const userId = responseData.id
-          console.log(userId);
-          localStorage.setItem("userId", userId)
+
 
           container.innerHTML = "";
-          const homePagesesContent = homePageses.content.cloneNode(true);
-          container.appendChild(homePagesesContent);
+          const starterPageContent = starterPage.content.cloneNode(true);
+          container.appendChild(starterPageContent);
         })
 
-      } else if (evt.target.id === "toCalederPage") {
-        console.log("hello");
-        container.innerHTML = "";
-        const calendarPageContent = calendarPage.content.cloneNode(true);
-        container.appendChild(calendarPageContent);
-        const counterLabel = document.getElementById("counterLabel")
-
-
       } else if (evt.target.id === "increcebtn") {
+
+        const counterLabel = document.getElementById("counterLabel")
         count += 1;
         counterLabel.innerHTML = count;
-      }
 
-      else if (evt.target.id === "saveDrinkDataBtn") {
-        
+      } else if (evt.target.id === "saveDrinkDataBtn") {
+
         const userId = localStorage.getItem("userId");
         const date = new Date();
         const drink = { date, count, userId }
         console.log(drink);
         const response = await createDrinkData("/beverage/", drink)
-          console.log(response);
+        console.log(response);
 
-      
+      } else if (evt.target.id === "toSettingsBtn") {
+        console.log("hello");
+        container.innerHTML = "";
+        const SettingsPageContent = SettingsPage.content.cloneNode(true);
+        container.appendChild(SettingsPageContent);
+
+        const editUserbtn = document.getElementById("editUserbtn");
+        const UserDataBtn = document.getElementById("UserDataBtn");
+        const LogOutBtn = document.getElementById("LogOutBtn");
+
+        editUserbtn.addEventListener("click", function (evt) {
+
+          container.innerHTML = "";
+          const editUserPageContent = editUserPage.content.cloneNode(true);
+          container.appendChild(editUserPageContent);
+
+          const deleteUserBtn = document.getElementById("deleteUserBtn")
+          const saveChangeBtn = document.getElementById("saveChangeBtn")
+          const editUsername = document.getElementById("editUsername")
+          const editEmail = document.getElementById("editEmail")
+          const editPassword = document.getElementById("editPassword")
+          const userName = localStorage.getItem("userName")
+          const userEmail = localStorage.getItem("userEmail")
+          const userId = localStorage.getItem("userId")
+
+          editUsername.value += userName
+          editEmail.value = userEmail
+
+
+          saveChangeBtn.addEventListener("click", async function (evt) {
+
+            const name = editUsername.value;
+            const email = editEmail.value;
+            let password = editPassword.value;
+            console.log(password);
+            const id = userId;
+
+            if (!password) {
+              updateUserErrorMsg.innerHTML = "Passord må være med!";
+              return;
+            };
+            password = await sha256(password);
+            const user = { name, email, password, id };
+            console.log(user);
+            const respon = await updateUser(`/user/:id${id}`, user);
+            const responseData = await respon.json();
+            console.log(responseData);
+            const userName = name
+            const userEmail = email
+            localStorage.setItem("userName", userName);
+            localStorage.setItem("userEmail", userEmail);
+
+            container.innerHTML = "";
+            const homePagesesContent = homePageses.content.cloneNode(true);
+            container.appendChild(homePagesesContent);
+          })
+
+
+          deleteUserBtn.addEventListener("click", async function (evt) {
+            let userId = localStorage.getItem("userId")
+            const respon = await deleteUser(`/user/${userId}`);
+            console.log(respon);
+            userId = "";
+            localStorage.setItem("userId", userId);
+
+            container.innerHTML = "";
+            const starterPageContent = starterPage.content.cloneNode(true);
+            container.appendChild(starterPageContent);
+          })
+
+        })
+        UserDataBtn.addEventListener("click", async function (evt) {
+          const userId = localStorage.getItem("userId");
+          const response = await getDrinkData("/beverage/getdrink", userId)
+          const responseData = await response.json();
+          const noe = JSON.stringify(responseData)
+          console.log(noe);
+
+          container.innerHTML = "";
+          const savedDrinkPageContent = savedDrinkPage.content.cloneNode(true);
+          container.appendChild(savedDrinkPageContent);
+
+          const emptyDataBtn = document.getElementById("emptyDataBtn")
+          emptyDataBtn.addEventListener("click", async function (evt) {
+            
+            const id = 1
+            const response = await deleteDrinkData("/beverage/delete", id)
+
+
+          })
+          
+          // const respon = await getShoppinglist("/shoppingList/getlist", userId);
+          // const responseData = await respon.json();
+
+
+          // container.innerHTML = "";
+          // const savedShoppinglistsPageContent = savedShoppinglistsPage.content.cloneNode(true);
+          // container.appendChild(savedShoppinglistsPageContent);
+
+          // const shoppinglistPageContainer = document.getElementById("shoppinglistPageContainer");
+          // let count = 0;
+
+          // for (const list of responseData) {
+          //   count++;
+          //   const collapsibleDiv = document.createElement("div");
+          //   collapsibleDiv.classList.add("collapsible");
+
+          //   const listName = document.createElement("div");
+          //   listName.classList.add("collapsible-header");
+
+          //   listName.innerHTML = "Handleliste " + count;
+          //   listName.addEventListener("click", function (evt) {
+          //     this.classList.toggle("active");
+          //     const listItems = this.nextElementSibling;
+          //     if (listItems.style.display === "block") {
+          //       listItems.style.display = "none";
+          //     } else {
+          //       listItems.style.display = "block";
+          //     }
+          //   });
+
+          //   const listItemsContainer = document.createElement("div");
+          //   listItemsContainer.classList.add("collapsible-content");
+
+          //   const bulletpoints = document.createElement("ul");
+          //   const listContent = JSON.parse(list.items)
+          //   for (let item of listContent) {
+          //     const listItem = document.createElement("li");
+          //     listItem.innerHTML = item;
+          //     bulletpoints.appendChild(listItem);
+          //   };
+          //   const btnDeleteList = document.createElement("button")
+          //   btnDeleteList.innerHTML = "Slett liste"
+
+          //   btnDeleteList.addEventListener("click", async function (evt) {
+          //     const shoppinglistId = list.shoppinglistId;
+          //     console.log(shoppinglistId);
+          //     const respon = await deleteShoppinglist("/shoppingList/delete", shoppinglistId);
+          //     console.log(respon);
+          //     container.innerHTML = "";
+          //     const savedShoppinglistsPageContent = savedShoppinglistsPage.content.cloneNode(true);
+          //     container.appendChild(savedShoppinglistsPageContent);
+          //   })
+
+          //   listItemsContainer.appendChild(bulletpoints);
+          //   listItemsContainer.appendChild(btnDeleteList);
+          //   collapsibleDiv.appendChild(listName);
+          //   collapsibleDiv.appendChild(listItemsContainer);
+          //   shoppinglistPageContainer.appendChild(collapsibleDiv);
+          // }
+
+        })
+
+        LogOutBtn.addEventListener("click", function (evt) {
+          let userId = "";
+          localStorage.setItem("userId", userId);
+          container.innerHTML = "";
+          const starterPageContent = starterPage.content.cloneNode(true);
+          container.appendChild(starterPageContent);
+        })
 
       }
+
     })
 
 

@@ -2,24 +2,17 @@ import pg from "pg";
 import SuperLogger from "./SuperLogger.mjs";
 import { HttpCodes } from "./httpCodes.mjs";
 
-
-/// TODO: is the structure / design of the DBManager as good as it could be?
-
 class DBManager {
-
     #credentials = {};
-
+   
     constructor(connectionString) {
         this.#credentials = {
             connectionString: process.env.DB_CONNECTIONSTRING_PROD,
             ssl: (process.env.DB_SSL === "true") ? process.env.DB_SSL : false
         };
-
     }
 
-
     async updateUser(user) {
-
         const client = new pg.Client(this.#credentials);
 
         try {
@@ -36,9 +29,7 @@ class DBManager {
         } finally {
             client.end(); // Always disconnect from the database.
         }
-
         return user;
-
     }
 
     async deleteUser(user) {
@@ -88,27 +79,7 @@ class DBManager {
         return user;
 
     }
-    async get(user) {
-        const client = new pg.Client(this.#credentials);
-        user = null;
     
-        try {
-            await client.connect();
-            const output = await client.query('SELECT * FROM "public"."users" WHERE "id" = $1', [user.id]);
-    
-            console.log(output);
-            user = output.rows[0];
-            // Rest of your code
-    
-        } catch (error) {
-            console.error('Error logging in:', error.stack);
-        } finally {
-            client.end();
-        }
-    
-        return user;
-    }
-
 
     async loginUser(email, password) {
         const client = new pg.Client(this.#credentials);
@@ -131,17 +102,16 @@ class DBManager {
         return user;
     }
     async upadateDrink(drink) {
+
         //sjekk om drink ekistere
-
         //om ekists, update
-
         // om ikke lag en ny drink colum 
-
         // HUSK Å MEKK COUNT INT I BEVERAGE TABLE
 
         return drink;
-
     }
+
+    //creatDrinks
     async loggDrinks(drink) {
 
         const client = new pg.Client(this.#credentials);
@@ -169,6 +139,63 @@ class DBManager {
         return drink;
 
     }
+
+    async deleteDrink(drink) {
+
+        const client = new pg.Client(this.#credentials);
+
+        try {
+            const sql = 'DELETE FROM "public"."beverage_table" WHERE "id" = $1';
+            const params = [drink.id];
+            console.log(params + "yoyo");
+            await client.connect();
+            const output = await client.query(sql, params);
+            return true
+
+        } catch (error) {
+            console.error(error);
+            //TODO : Error handling?? Remember that this is a module seperate from your server 
+        } finally {
+            client.end(); // Always disconnect from the database.
+        }
+
+        return drink;
+
+    }
+
+    async getDrink(userId) {
+        const client = new pg.Client(this.#credentials);
+        let drinkContent = [];
+
+        try {
+            await client.connect();
+            console.log('Connected to the database');
+            const sql = 'SELECT * FROM "public"."beverage_table" WHERE "userId" LIKE $1';
+            const params = [userId];
+            const output = await client.query(sql, params);
+
+            console.log('Query executed successfully');
+
+            if (output.rows.length > 0) {
+                drinkContent = output.rows;
+            } else {
+                console.log('No shopping list found for the user');
+            }
+
+            console.log("this is shoppinglist", drinkContent); // Log shoppingList
+            console.log("this is output", output); // Log output
+        } catch (error) {
+            console.error('Error in getShoppinglist:', error.stack);
+            throw error;
+        } finally {
+            client.end();
+            console.log('Disconnected from the database');
+        }
+
+        return drinkContent;
+    }
+
+    
     
 }    
 

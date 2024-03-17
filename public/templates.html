@@ -21,28 +21,24 @@
     <input type="text" id="loggCreateUserInInp" placeholder="email">
     <input type="text" id="passwordCreateUserInp" placeholder="password">
     <button  id="signUpBtn">Sign Up</button>
-    <br>
-    <h1>Delete User</h1> 
-    <input type="text" id="DeleteUserId" placeholder="UserId">
-    <button onclick="deleteUser()" id="deleteBtn">Delete</button>
 </template>
 
 <template id="homePageses">
-    <div id="imgContainer">
-        <img src="./pic/water.svg">
-    </div>
-    
-        <label id="counterLabel">0</label><br>
-        <button id="increcebtn">+</button>
-        <button id="saveDrinkDataBtn">Save</button>
-        <button id="toCalederPage">Settings</button>
-   
+  <div id="imgContainer">
+      <img src="./pic/water.svg">
+  </div>
+  <label id="counterLabel">0</label><br>
+  <button id="increcebtn">+</button>
+  <button id="saveDrinkDataBtn">Save</button>
+  <button id="toSettingsBtn">Settings</button> 
 </template>
 
-<template id="calendarPage">
+<template id="SettingsPage">
   <h1 id="usernameTitle"></h1>
+  <img src="" alt="">
   <button id="editUserbtn">Change User</button>
-  <button id="deleteUserBtn">Delete User</button>
+  <button id="UserDataBtn">Data</button>
+  <button id="LogOutBtn">Log Out</button>
 </template>
 
 <template id="editUserPage">
@@ -50,5 +46,12 @@
   <input type="text" id="editEmail" placeholder="Email"></input>
   <input type="text" id="editPassword" placeholder="password"></input>
   <button id="saveChangeBtn">Save Changes</button>
+  <button id="deleteUserBtn">Delete User</button>
+</template>
+
+<template id="savedDrinkPage">
+  <div id="saveDrinkData"></div>
+  <button id="emptyDataBtn">Empty Data</button>
+  <button id="toHomePageBtn"> ⇚ </button>
 </template>
 

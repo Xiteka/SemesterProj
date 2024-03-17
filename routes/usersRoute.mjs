@@ -59,10 +59,28 @@ USER_API.post('/', async (req, res, next) => {
 
 });
 
-USER_API.put('/:id', (req, res) => {
-    /// TODO: Edit user
-    const user = new User(); //TODO: The user info comes as part of the request 
-    user.save();
+USER_API.put('/:id', async (req, res) => {
+    const { name, email, password, id } = req.body;
+    let user = new User(); //TODO: The user info comes as part of the request 
+    console.log(email);
+    
+    user.name = name;
+    user.email = email;
+    user.pswHash = password;
+    user.id = id
+
+    console.log(user);
+
+    let exists = false;
+
+    if (!exists) {
+
+        user = await user.save();
+        res.status(HttpCodes.SuccesfullRespons.Ok).json(JSON.stringify(user)).end();
+    } else {
+        res.status(HttpCodes.ClientSideErrorRespons.BadRequest).end();
+    }
+
 });
 
 USER_API.delete('/:id', async (req, res) => {
@@ -80,19 +98,6 @@ USER_API.delete('/:id', async (req, res) => {
         res.status(HttpCodes.ClientSideErrorRespons.BadRequest).send("cant delete").end();
     }
 });
-
-
-    //----------------------------------------------//
-    //ROMOVE THISSSSS !!!!!!!!!!!!!!!!!!!!
-    //----------------------------------------------//
-    // if (user.delete()) {
-    //     res.status(HttpCodes.SuccesfullRespons.Ok).send("User Dosen't exist anymore").end();
-    // } else {
-    //     res.status(HttpCodes.ClientSideErrorRespons.BadRequest).send("cant delete").end();
-    // }
-     //----------------------------------------------//
-    //ROMOVE THISSSSS !!!!!!!!!!!!!!!!!!!!
-    //----------------------------------------------//
 
     
 USER_API.post('/loggIn', async (req, res, next) => {
