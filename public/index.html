@@ -10,16 +10,14 @@
 </head>
 
 <body>
-
   <div id="container"></div>
-
   <script type="module">
 
     //------------------------ ～> Declarations <～ --------------------------------//
 
     await insertTemplatesFrom("templates.html");
     const container = document.getElementById("container");
-    let count = 0;
+
 
     // ┉> Template Pages <┉
     const starterPage = document.querySelector("#starterPage");
@@ -35,23 +33,22 @@
     const toCreateUserPageBtn = document.getElementById("toCreateUserPageBtn");
     const toSettingsBtn = document.getElementById("toSettingsBtn");
     const increcebtn = document.getElementById("increcebtn");
-    const saveDrinkDataBtn = document.getElementById("saveDrinkDataBtn");
+    const homePagesesContent = document.getElementById("homePagesesContent");
+    const counterLabel = document.getElementById("counterLabel")
 
+    let count
 
     //------------------------App functionality (JAVASCRIPT) ----------------------------------//
     const id = localStorage.getItem("userId")
     if (!id) {
       const starterPageContent = starterPage.content.cloneNode(true);
       container.appendChild(starterPageContent);
+
     } else {
       const homePagesesContent = homePageses.content.cloneNode(true);
       container.appendChild(homePagesesContent);
+
     }
-
-    //------------------------App functionality (JAVASCRIPT) ----------------------------------//
-
-
-
 
     //------------------------Functions----------------------------------//
 
@@ -97,7 +94,6 @@
 
       const respon = await fetch(url, header);
       return respon;
-
     }
 
     async function deleteUser(url) {
@@ -171,9 +167,7 @@
 
       const respon = await fetch(url, header);
       return respon;
-
     }
-
 
     //--------------------------Event and buttons --------------------------------//
     container.addEventListener("click", async function (evt) {
@@ -191,10 +185,8 @@
           let password = document.getElementById("passwordInp").value;
           password = await sha256(password);
           const user = { email, password }
-          console.log(user);
 
           const response = await logIn("/user/loggIn", user)
-          console.log(response);
           if (response.status != 200) {
             errorLogIn.innerHTML = "Wrong username or password"
           }
@@ -210,7 +202,6 @@
           container.innerHTML = "";
           const homePagesesContent = homePageses.content.cloneNode(true);
           container.appendChild(homePagesesContent);
-
         })
 
       } else if (evt.target.id === "toCreateUserPageBtn") {
@@ -219,7 +210,6 @@
         container.appendChild(CreateUserPageContent);
 
         const signUpBtn = document.getElementById("signUpBtn");
-
         signUpBtn.addEventListener("click", async function (evt) {
 
           const name = document.getElementById("nameCreateUserInp").value;
@@ -227,14 +217,11 @@
           let password = document.getElementById("passwordCreateUserInp").value;
           password = await sha256(password);
           const user = { name, email, password }
-          console.log(user);
           const response = await createUser("/user/", user)
-          console.log(response);
           if (response.status != 200) {
             errorLogIn.innerHTML = "Wrong username or password"
           }
           const responseData = await response.json();
-
 
           container.innerHTML = "";
           const starterPageContent = starterPage.content.cloneNode(true);
@@ -242,22 +229,54 @@
         })
 
       } else if (evt.target.id === "increcebtn") {
-
+        const savedDrinkid = localStorage.getItem("savedDrinkid")
         const counterLabel = document.getElementById("counterLabel")
-        count += 1;
-        counterLabel.innerHTML = count;
+        const savedCont = localStorage.getItem("count");
+        if (savedCont != null) {
+          counterLabel.innerHTML = savedCont
+        } else {
+          count = 0
+        }
 
-      } else if (evt.target.id === "saveDrinkDataBtn") {
+        if (!savedDrinkid) {
+          count += 1;
 
-        const userId = localStorage.getItem("userId");
-        const date = new Date();
-        const drink = { date, count, userId }
-        console.log(drink);
-        const response = await createDrinkData("/beverage/", drink)
-        console.log(response);
+          const userId = localStorage.getItem("userId");
+          const dateWTime = new Date();
+          const date = new Date(dateWTime).toISOString().split('T')[0];
+          const drink = { date, count, userId }
+          const response = await createDrinkData("/beverage/", drink)
+          const responseData = await response.json()
+          const savedDrink = JSON.parse(responseData)
+          const savedDrinkid = savedDrink.id
 
-      } else if (evt.target.id === "toSettingsBtn") {
-        console.log("hello");
+          localStorage.setItem("savedDrinkid", savedDrinkid)
+          localStorage.setItem("count", count)
+
+        } else {
+          count += 1;
+
+          const userId = localStorage.getItem("userId");
+          const id = localStorage.getItem("savedDrinkid");
+          const dateWTime = new Date();
+          const date = new Date(dateWTime).toISOString().split('T')[0];
+          const input = { count, id, userId, date };
+          const respon = await updateData(`/beverage/${id}`, input);
+          const responseData = await respon.json();
+          
+          localStorage.setItem("count", count)
+        }
+        counterLabel.innerHTML = localStorage.getItem("count")
+
+      } else if (evt.target.id === "btnHome") {
+
+        container.innerHTML = "";
+        const homePagesesContent = homePageses.content.cloneNode(true);
+        container.appendChild(homePagesesContent);
+        homePagesesContent.counterLabel = localStorage.getItem("count")
+      }
+      else if (evt.target.id === "toSettingsBtn") {
+
         container.innerHTML = "";
         const SettingsPageContent = SettingsPage.content.cloneNode(true);
         container.appendChild(SettingsPageContent);
@@ -290,21 +309,20 @@
             const name = editUsername.value;
             const email = editEmail.value;
             let password = editPassword.value;
-            console.log(password);
             const id = userId;
 
             if (!password) {
               updateUserErrorMsg.innerHTML = "Passord må være med!";
               return;
             };
+
             password = await sha256(password);
             const user = { name, email, password, id };
-            console.log(user);
             const respon = await updateUser(`/user/:id${id}`, user);
             const responseData = await respon.json();
-            console.log(responseData);
             const userName = name
             const userEmail = email
+            
             localStorage.setItem("userName", userName);
             localStorage.setItem("userEmail", userEmail);
 
@@ -313,11 +331,9 @@
             container.appendChild(homePagesesContent);
           })
 
-
           deleteUserBtn.addEventListener("click", async function (evt) {
             let userId = localStorage.getItem("userId")
             const respon = await deleteUser(`/user/${userId}`);
-            console.log(respon);
             userId = "";
             localStorage.setItem("userId", userId);
 
@@ -325,28 +341,25 @@
             const starterPageContent = starterPage.content.cloneNode(true);
             container.appendChild(starterPageContent);
           })
-
         })
+
         UserDataBtn.addEventListener("click", async function (evt) {
           const userId = localStorage.getItem("userId");
           const response = await getDrinkData("/beverage/getdrink", userId)
           const responseData = await response.json();
           const drinkDataResponse = JSON.stringify(responseData)
-          console.log(drinkDataResponse);
 
           container.innerHTML = "";
           const savedDrinkPageContent = savedDrinkPage.content.cloneNode(true);
           container.appendChild(savedDrinkPageContent);
 
-
           const saveDrinkData = document.getElementById("saveDrinkData");
-          let count = 0;
+          //let count = getDrinksToday(userId);
 
           for (const data of responseData) {
             count++;
             const collapsibleDiv = document.createElement("div");
             collapsibleDiv.classList.add("collapsible");
-
             const date = document.createElement("div");
             date.classList.add("collapsible-header");
 
@@ -370,7 +383,6 @@
              `
 
             const inputData = document.createElement("input")
-    
             const btnDeleteList = document.createElement("button")
             btnDeleteList.innerHTML = "Slett data"
 
@@ -378,21 +390,19 @@
               const id = data.id
               const response = await deleteDrinkData("/beverage/delete", id)
               saveDrinkData.removeChild(collapsibleDiv);
-
             })
+
             const btnUpdateData = document.createElement("button")
             btnUpdateData.innerHTML = "Update"
-
             btnUpdateData.addEventListener("click", async function (evt) {
               const count = inputData.value
               const id = data.id
               const userId = localStorage.getItem("userId")
-              const input = { count, id, userId};
+              const date = data.date
+              const input = { count, id, userId, date };
               const respon = await updateData(`/beverage/${id}`, input);
               const responseData = await respon.json();
-              console.log(count);
             })
-
 
             contenContainer.appendChild(inputData);
             contenContainer.appendChild(btnDeleteList);
@@ -401,7 +411,6 @@
             collapsibleDiv.appendChild(contenContainer);
             saveDrinkData.appendChild(collapsibleDiv);
           }
-
         })
 
         LogOutBtn.addEventListener("click", function (evt) {
@@ -411,14 +420,8 @@
           const starterPageContent = starterPage.content.cloneNode(true);
           container.appendChild(starterPageContent);
         })
-
       }
-
     })
-
-
   </script>
-
 </body>
-
 </html>

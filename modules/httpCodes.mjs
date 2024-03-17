@@ -56,7 +56,6 @@ class HttpCodes {
         NetworkAuthenticationRequired: 511
     }
 
-
 }
 const HTTPMethods = {
     POST: "POST",
