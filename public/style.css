@@ -15,7 +15,6 @@ html, body {
   align-items: center;
   max-width: 320px;
   margin: 30px auto;
-  border: 1px solid red; /* Add a border to visualize the container */
 }
 
 #imgContainer {
@@ -28,7 +27,7 @@ html, body {
 
 img {
   max-width: 50%; /* Ensure the image fits within its container */
-  border: 1px solid blue; /* Add a border to visualize the image */
+  
 }
 
 h1 {
@@ -40,41 +39,6 @@ h1 {
 
 h3 {
   font-weight: 600;
-}
-
-#prev, #next {
-    width: 20px;
-    height: 20px;
-    position: relative;
-    top: 50%;
-    border: none;
-    background-color: transparent;
-    cursor: pointer;
-}
-
-#prev::before, #next::before {
-    content: '';
-    width: 50%;
-    height: 50%;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    border-style: solid;
-    border-width: 0.25em 0.25em 0 0;
-    border-color: #ccc;
-}
-
-#prev::before {
-    transform: translate(-50%, -50%) rotate(-135deg);
-}
-
-#next::before {
-    transform: translate(-50%, -50%) rotate(45deg);
-}
-
-#prev:hover::before,
-#next:hover::before {
-  border-color: #000;
 }
 
 input {
@@ -100,8 +64,8 @@ button {
   text-align: center;
   margin: 10px 0;
 }
-.collapsible {
 
+.collapsible {
   border: 1px solid #ccc;
   background-color: #e8c59c;
   border-radius: 8px;
