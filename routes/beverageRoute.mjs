@@ -79,6 +79,23 @@ BEVERAGE_API.delete('/delete', async (req, res) => {
     }
 });
 
+BEVERAGE_API.put('/:id', async (req, res) => {
+    const { id, count, userId} = req.body;
+    const drink = new Beverage();
+    drink.id = id;
+    drink.count = count;
+    drink.userId = userId;
+
+  
+   
+    try{
+        await drink.save();
+        res.status(HttpCodes.SuccesfullRespons.Ok).send(drink).end();
+    } catch (error) {
+        res.status(HttpCodes.ClientSideErrorRespons.BadRequest).send("cant delete").end();
+    }
+});
+
 
 
 export default BEVERAGE_API

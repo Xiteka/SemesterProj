@@ -103,10 +103,27 @@ class DBManager {
     }
     async upadateDrink(drink) {
 
+       
         //sjekk om drink ekistere
         //om ekists, update
         // om ikke lag en ny drink colum 
         // HUSK Å MEKK COUNT INT I BEVERAGE TABLE
+        const client = new pg.Client(this.#credentials);
+        
+        try {
+            await client.connect();
+            const output = await client.query('UPDATE "public"."beverage_table" set "count" = $1 WHERE "id" = $2;', [drink.count, drink.id]);
+
+            // Client.Query returns an object of type pg.Result (https://node-postgres.com/apis/result)
+            // Of special intrest is the rows and rowCount properties of this object.
+
+            //TODO Did we update the user?
+
+        } catch (error) {
+            //TODO : Error handling?? Remember that this is a module seperate from your server 
+        } finally {
+            client.end(); // Always disconnect from the database.
+        }
 
         return drink;
     }

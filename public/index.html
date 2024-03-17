@@ -160,6 +160,20 @@
       return respon;
     }
 
+    async function updateData(url, data) {
+      const header = {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      };
+
+      const respon = await fetch(url, header);
+      return respon;
+
+    }
+
 
     //--------------------------Event and buttons --------------------------------//
     container.addEventListener("click", async function (evt) {
@@ -317,81 +331,76 @@
           const userId = localStorage.getItem("userId");
           const response = await getDrinkData("/beverage/getdrink", userId)
           const responseData = await response.json();
-          const noe = JSON.stringify(responseData)
-          console.log(noe);
+          const drinkDataResponse = JSON.stringify(responseData)
+          console.log(drinkDataResponse);
 
           container.innerHTML = "";
           const savedDrinkPageContent = savedDrinkPage.content.cloneNode(true);
           container.appendChild(savedDrinkPageContent);
 
-          const emptyDataBtn = document.getElementById("emptyDataBtn")
-          emptyDataBtn.addEventListener("click", async function (evt) {
-            
-            const id = 1
-            const response = await deleteDrinkData("/beverage/delete", id)
+
+          const saveDrinkData = document.getElementById("saveDrinkData");
+          let count = 0;
+
+          for (const data of responseData) {
+            count++;
+            const collapsibleDiv = document.createElement("div");
+            collapsibleDiv.classList.add("collapsible");
+
+            const date = document.createElement("div");
+            date.classList.add("collapsible-header");
+
+            date.innerHTML = data.date;
+            date.addEventListener("click", function (evt) {
+              this.classList.toggle("active");
+              const listItems = this.nextElementSibling;
+              if (listItems.style.display === "block") {
+                listItems.style.display = "none";
+              } else {
+                listItems.style.display = "block";
+              }
+            });
+
+            const contenContainer = document.createElement("div");
+            contenContainer.classList.add("collapsible-content");
+
+            contenContainer.innerHTML = `
+              <h3>Vann Drukket denne dagen ${data.count}</h3>
+              <img src="pic/water.svg">
+             `
+
+            const inputData = document.createElement("input")
+    
+            const btnDeleteList = document.createElement("button")
+            btnDeleteList.innerHTML = "Slett data"
+
+            btnDeleteList.addEventListener("click", async function (evt) {
+              const id = data.id
+              const response = await deleteDrinkData("/beverage/delete", id)
+              saveDrinkData.removeChild(collapsibleDiv);
+
+            })
+            const btnUpdateData = document.createElement("button")
+            btnUpdateData.innerHTML = "Update"
+
+            btnUpdateData.addEventListener("click", async function (evt) {
+              const count = inputData.value
+              const id = data.id
+              const userId = localStorage.getItem("userId")
+              const input = { count, id, userId};
+              const respon = await updateData(`/beverage/${id}`, input);
+              const responseData = await respon.json();
+              console.log(count);
+            })
 
 
-          })
-          
-          // const respon = await getShoppinglist("/shoppingList/getlist", userId);
-          // const responseData = await respon.json();
-
-
-          // container.innerHTML = "";
-          // const savedShoppinglistsPageContent = savedShoppinglistsPage.content.cloneNode(true);
-          // container.appendChild(savedShoppinglistsPageContent);
-
-          // const shoppinglistPageContainer = document.getElementById("shoppinglistPageContainer");
-          // let count = 0;
-
-          // for (const list of responseData) {
-          //   count++;
-          //   const collapsibleDiv = document.createElement("div");
-          //   collapsibleDiv.classList.add("collapsible");
-
-          //   const listName = document.createElement("div");
-          //   listName.classList.add("collapsible-header");
-
-          //   listName.innerHTML = "Handleliste " + count;
-          //   listName.addEventListener("click", function (evt) {
-          //     this.classList.toggle("active");
-          //     const listItems = this.nextElementSibling;
-          //     if (listItems.style.display === "block") {
-          //       listItems.style.display = "none";
-          //     } else {
-          //       listItems.style.display = "block";
-          //     }
-          //   });
-
-          //   const listItemsContainer = document.createElement("div");
-          //   listItemsContainer.classList.add("collapsible-content");
-
-          //   const bulletpoints = document.createElement("ul");
-          //   const listContent = JSON.parse(list.items)
-          //   for (let item of listContent) {
-          //     const listItem = document.createElement("li");
-          //     listItem.innerHTML = item;
-          //     bulletpoints.appendChild(listItem);
-          //   };
-          //   const btnDeleteList = document.createElement("button")
-          //   btnDeleteList.innerHTML = "Slett liste"
-
-          //   btnDeleteList.addEventListener("click", async function (evt) {
-          //     const shoppinglistId = list.shoppinglistId;
-          //     console.log(shoppinglistId);
-          //     const respon = await deleteShoppinglist("/shoppingList/delete", shoppinglistId);
-          //     console.log(respon);
-          //     container.innerHTML = "";
-          //     const savedShoppinglistsPageContent = savedShoppinglistsPage.content.cloneNode(true);
-          //     container.appendChild(savedShoppinglistsPageContent);
-          //   })
-
-          //   listItemsContainer.appendChild(bulletpoints);
-          //   listItemsContainer.appendChild(btnDeleteList);
-          //   collapsibleDiv.appendChild(listName);
-          //   collapsibleDiv.appendChild(listItemsContainer);
-          //   shoppinglistPageContainer.appendChild(collapsibleDiv);
-          // }
+            contenContainer.appendChild(inputData);
+            contenContainer.appendChild(btnDeleteList);
+            contenContainer.appendChild(btnUpdateData);
+            collapsibleDiv.appendChild(date);
+            collapsibleDiv.appendChild(contenContainer);
+            saveDrinkData.appendChild(collapsibleDiv);
+          }
 
         })
 

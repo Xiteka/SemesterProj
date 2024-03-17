@@ -16,7 +16,7 @@ class Beverage {
   
       async save() {
         console.log(this)
-
+      
         if (this.id != null){
           return DBManager.upadateDrink(this)
         }else{
@@ -66,7 +66,7 @@ class Beverage {
             
               return {
                   success: true,
-                  shoppinglist: dbDrink
+                  dbDrink: dbDrink
               };
           } else {
               return {
